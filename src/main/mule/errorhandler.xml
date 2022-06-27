@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="fdfd0ffc-83b7-48a3-9739-0685b60c6777" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="69850121-b907-4aef-9b97-c783d5fc4c11" />
+	<flow name="errorhandlerFlow" doc:id="575b08b3-4f0e-41b5-841c-be1a9193bfe5" >
+		<http:listener doc:name="Listener" doc:id="110d5ef0-1a88-4e51-ac8e-ab51896e059b" config-ref="HTTP_Listener_config" path="/err"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="5a55d1b6-79b9-4cca-ad59-0f0e0f7986ee" />
+		<ee:transform doc:name="Transform Message" doc:id="c65a40ac-24af-4af6-b6b7-e637ac837670" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+"rsponse" + payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="GET" doc:name="Request" doc:id="b1713d3c-b413-43b3-8130-d19f9ab55998" config-ref="HTTP_Request_configuration" path="/HFHJFHJF"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="fa65e8ef-8ec4-4a12-9231-f142bb563ae8" type="HTTP:NOT_FOUND">
+				<set-payload value="HTTP NOT FOUND" doc:name="Set Payload" doc:id="e3a4a071-7781-47bf-a5e9-b83dad1baa8b" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>
